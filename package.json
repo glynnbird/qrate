@@ -1,6 +1,6 @@
 {
   "name": "qrate",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Node.js queue library with controllable concurrency and rate limiting",
   "main": "index.js",
   "scripts": {
