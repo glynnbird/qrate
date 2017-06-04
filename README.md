@@ -1,5 +1,9 @@
 # qrate
 
+[![Build Status](https://travis-ci.org/glynnbird/qrate.svg?branch=master)](https://travis-ci.org/glynnbird/qrate) [![npm version](https://badge.fury.io/js/qrate.svg)](https://badge.fury.io/js/qrate)
+
+## Introduction
+
 The queue module based on queue from the [async](https://caolan.github.io/async/) library but modified to allow the queues throughput to be controlled in terms of:
 
 - concurrency - the maximum number of workers running at any point in time
