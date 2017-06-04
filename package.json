@@ -1,0 +1,29 @@
+{
+  "name": "qrate",
+  "version": "1.0.0",
+  "description": "A Node.js queue library with controllable concurrency and rate limiting",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glynnbird/qrate.git"
+  },
+  "keywords": [
+    "queue",
+    "async",
+    "rate",
+    "node.js"
+  ],
+  "author": "Glynn Bird <glynn.bird@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/glynnbird/qrate/issues"
+  },
+  "homepage": "https://github.com/glynnbird/qrate#readme",
+  "devDependencies": {
+    "chai": "^4.0.1",
+    "mocha": "^3.4.2"
+  }
+}
