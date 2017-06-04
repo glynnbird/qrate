@@ -4,14 +4,14 @@
 
 ## Introduction
 
-The queue module based on queue from the [async](https://caolan.github.io/async/) library but modified to allow the queues throughput to be controlled in terms of:
+The queue library based on the [async.queue](http://caolan.github.io/async/docs.html#queue) utility but modified to allow a queue's throughput to be controlled in terms of:
 
 - concurrency - the maximum number of workers running at any point in time
-- rateLimit - the maximum number of workers to be started per second
+- rateLimit - the maximum number of workers started per second
 
 The default behaviour is a `concurrency` of 1 (one worker at a time) and a `rateLimit` of null (no rate limiting).
 
-The qrate library can be used as a drop-in replacement for the async.queue function.
+The *qrate* library can be used as a drop-in replacement for the [async.queue](http://caolan.github.io/async/docs.html#queue) function.
 
 ## Installation
 
@@ -64,7 +64,7 @@ for (var i = 0; i < 10; i++) {
 }
 ```
 
-As the queue has the default `concurrency` of 1, only one worker is executing at any one time so each item in the queue takes 100ms:
+The queue has the default `concurrency` of 1, so worker starts after its predecessor finishes:
 
 ```sh
 Processing { i: 0 } @ 21 ms
@@ -79,7 +79,7 @@ Processing { i: 8 } @ 852 ms
 Processing { i: 9 } @ 958 ms
 ```
 
-We can increase the concurrency to deal with work at a faster rate (to process workers in parallel) by passing a `concurrency` value as a second parameter:
+We can increase the number of workers running in parallel by passing a `concurrency` value as a second parameter:
 
 ```js
 
@@ -106,7 +106,7 @@ So far we have not done anything that a normal `async.queue` could do. This is w
 
 ## Rate limiting the queue
 
-If you want to limit that rate of throughput of the queue (e.g. 5 jobs per second), then you can pass a third paramter to `qrate`. This is the `rateLimit` parameter which is a number that indicates how many jobs per second you want the queue to consume:
+If you want to limit the rate of throughput of the queue (e.g. 5 jobs per second), then you can pass a third `rateLimit`  parameter to `qrate`. The `rateLimit` indicates the maximum number workers per second you want the queue to start:
 
 - rateLimit = 1 - one per second
 - rateLimit = 5 - five per second
@@ -135,20 +135,14 @@ Processing { i: 9 } @ 4127 ms
 
 Notice how in the early part of each second, two workers are executed in turn, then the queue waits until the next second boundary before resuming work again.
 
+Rate-limiting is useful if you want to ensure that the number of API calls your code generates stays below the API provider's quota, e.g. five API calls per second.
+
 ## Killing the queue
 
-Unlike a normal queue, a timer is set up to handle the throttling of a rate-limited queue. The queue
+A rate-limited `qrate` queue sets up a timer to handle the throttling of a rate-limited queue. The queue
 can be cleaned up by calling the `q.kill()` function.
 
-The `q.drain` function is called when a queue is emptied:
-
-```js
-q.drain = funcion() {
-  console.log('the queue is empty');
-};
-```
-
-so if you want the queue to stop when empty, then call `q.kill` in that function:
+If your application is working through a single list of work, the you can provide a `q.drain` function that is called when a queue is emptied and call `q.kill` in that function:
 
 ```
 q.drain = funcion() {
@@ -157,13 +151,13 @@ q.drain = funcion() {
 };
 ```
 
-or 
+or, simply tie the `drain` and `kill` functions together:
 
 ```
 q.drain = q.kill;
 ```
 
-In other applications, you may wish to keep the queue alive and periodically feed it with fresh work.
+In other applications, you may wish to keep the queue alive and periodically feed it with fresh work. 
 
 
 
