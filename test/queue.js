@@ -798,4 +798,26 @@ describe('queue', function(){
             done();
         }
     });
+
+    it('promises', function(done) {
+
+        var q = qrate(async (task, callback) => {
+           return new Promise((resolve, reject) => {
+             setImmediate(() => {
+                resolve({ok: true, task: task})
+             })
+           })
+        }, 2);
+
+        q.push(1);
+        q.push(2)
+        expect(q.length()).to.equal(2);
+        expect(q.concurrency).to.equal(2);
+
+        q.drain = function () {
+            expect(q.concurrency).to.equal(2);
+            expect(q.length()).to.equal(0);
+            done();
+        };
+    });
 });
