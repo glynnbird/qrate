@@ -1,10 +1,11 @@
 {
   "name": "qrate",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A Node.js queue library with controllable concurrency and rate limiting",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "standard": "standard --fix"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "homepage": "https://github.com/glynnbird/qrate#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "standard": "^12.0.1"
   }
 }

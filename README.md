@@ -23,7 +23,7 @@ npm install qrate
 
 or to import it into your Node.js project:
 
-```
+```sh
 npm install --save qrate
 ```
 
@@ -59,7 +59,7 @@ const worker = function(data, done) {
 const q = qrate(worker);
 
 // add ten things to the queue
-for (var i = 0; i < 10; i++) {
+for (let i = 0; i < 10; i++) {
   q.push({ i: i });
 }
 ```
@@ -84,7 +84,7 @@ We can increase the number of workers running in parallel by passing a `concurre
 ```js
 
 // create a queue where up to three workers run at any time
-var q = qrate(worker, 3);
+const q = qrate(worker, 3);
 ```
 
 which speeds things up significantly:
@@ -115,7 +115,7 @@ If you want to limit the rate of throughput of the queue (e.g. 5 jobs per second
 
 ```js
 // concurrency 1, rateLimit 2 workers per second
-var q = qrate(worker, 1, 2);
+const q = qrate(worker, 1, 2);
 ```
 
 which produces the output:
@@ -137,15 +137,55 @@ Notice how in the early part of each second, two workers are executed in turn, t
 
 Rate-limiting is useful if you want to ensure that the number of API calls your code generates stays below the API provider's quota, e.g. five API calls per second.
 
+## Worker functions with callbacks
+
+Your worker function can be a standard JavaScript function with two parameters
+
+- the payload - the data that your function receives from the queue.
+- a callback - you call this function to indicate that the worker has finished its work.
+
+```js
+// worker function that calls back after 100ms
+const worker = function(data, done) {
+  // let's imagine we're writing data to a database
+  // This is typically an asynchronous action.
+  db.insert(data, function(err, insertData) {
+    // now we can call the callback function to show that we're finished
+    done(err, insertData)
+  })
+};
+```
+
+## Work functions with Promises
+
+Alternatively, a more modern pattern is to define your worker function as an `async` function. This allows you to deal with asynchronous activity, like database calls, without callbacks. This time the function only accepts one parameter:
+
+```js
+const worker = async (data) => {
+  const insertData = await db.insert(data)
+  return {ok: true}
+};
+```
+
+## Detecting that the queue is empty
+
+If you create a `q.drain` function, it will be called when the queue size reaches zero. This can be used as a trigger to publish results, fetch more work or to kill the queue & tidy up. (see Killing the queue).
+
+```js
+q.drain = () => {
+  // all of the queue items have been processed
+  console.log('the queue is empty');
+}
+```
+
 ## Killing the queue
 
-A rate-limited `qrate` queue sets up a timer to handle the throttling of a rate-limited queue. The queue
-can be cleaned up by calling the `q.kill()` function.
+A rate-limited `qrate` queue sets up a timer to handle the throttling of a rate-limited queue. The queue can be cleaned up by calling the `q.kill()` function.
 
 If your application is working through a single list of work, the you can provide a `q.drain` function that is called when a queue is emptied and call `q.kill` in that function:
 
-```
-q.drain = funcion() {
+```js
+q.drain = () => {
   console.log('the queue is empty');
   q.kill();
 };
@@ -153,7 +193,7 @@ q.drain = funcion() {
 
 or, simply tie the `drain` and `kill` functions together:
 
-```
+```js
 q.drain = q.kill;
 ```
 

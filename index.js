@@ -1,9 +1,9 @@
-const queue = require('./lib/queue.js');
-const wrapAsync = require('./lib/wrapAsync.js');
+const queue = require('./lib/queue.js')
+const wrapAsync = require('./lib/wrapAsync.js')
 
 /**
  * A queue of tasks for the worker function to complete.
- * @typedef {Object} QueueObject
+ * @typedef {Iterable} QueueObject
  * @memberOf module:ControlFlow
  * @property {Function} length - a function returning the number of items
  * waiting to be processed. Invoke with `queue.length()`.
@@ -53,6 +53,18 @@ const wrapAsync = require('./lib/wrapAsync.js');
  * @property {Function} kill - a function that removes the `drain` callback and
  * empties remaining tasks from the queue forcing it to go idle. No more tasks
  * should be pushed to the queue after calling this function. Invoke with `queue.kill()`.
+ *
+ * @example
+ * const q = aync.queue(worker, 2)
+ * q.push(item1)
+ * q.push(item2)
+ * q.push(item3)
+ * // queues are iterable, spread into an array to inspect
+ * const items = [...q] // [item1, item2, item3]
+ * // or use for of
+ * for (let item of q) {
+ *     console.log(item)
+ * }
  */
 
 /**
@@ -72,11 +84,7 @@ const wrapAsync = require('./lib/wrapAsync.js');
  * @param {number} [concurrency=1] - An `integer` for determining how many
  * `worker` functions should be run in parallel.  If omitted, the concurrency
  * defaults to `1`.  If the concurrency is `0`, an error is thrown.
- * @param {number} [rateLimit=null] - A `number` that determines the maximum number
- * of times per second work will be consumed from the queue.  If omitted, the rateLimit
- * defaults to `1` - 1 item per second.  If the rateLimit is `0` or less, an error is thrown.
- * A rate limit of `null` means "no rate limit - as fast as possible"
- * @returns {module:ControlFlow.QueueObject} A queue object to manage the tasks. Callbacks can
+ * @returns {module:ControlFlow.QueueObject} A queue object to manage the tasks. Callbacks can be
  * attached as certain properties to listen for specific events during the
  * lifecycle of the queue.
  * @example
@@ -90,6 +98,11 @@ const wrapAsync = require('./lib/wrapAsync.js');
  * // assign a callback
  * q.drain = function() {
  *     console.log('all items have been processed');
+ * };
+ *
+ * // assign an error callback
+ * q.error = function(err, task) {
+ *     console.error('task experienced an error');
  * };
  *
  * // add some items to the queue
@@ -110,10 +123,10 @@ const wrapAsync = require('./lib/wrapAsync.js');
  *     console.log('finished processing bar');
  * });
  */
-module.exports =  function (worker, concurrency, rateLimit) {
-    if (typeof rateLimit != 'number') rateLimit = null;
-    var _worker = wrapAsync(worker);
-    return queue(function (items, cb) {
-        _worker(items[0], cb);
-    }, concurrency, rateLimit);
+module.exports = function (worker, concurrency, rateLimit) {
+  if (typeof rateLimit !== 'number') rateLimit = null
+  var _worker = wrapAsync(worker)
+  return queue((items, cb) => {
+    _worker(items[0], cb)
+  }, concurrency, rateLimit)
 }
