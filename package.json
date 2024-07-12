@@ -4,7 +4,7 @@
   "description": "A Node.js queue library with controllable concurrency and rate limiting",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
@@ -21,9 +21,5 @@
   "bugs": {
     "url": "https://github.com/glynnbird/qrate/issues"
   },
-  "homepage": "https://github.com/glynnbird/qrate#readme",
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^6.1.4"
-  }
+  "homepage": "https://github.com/glynnbird/qrate#readme"
 }
