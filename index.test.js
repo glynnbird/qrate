@@ -1,7 +1,7 @@
 /* eslint-env mocha */
-const test = require('node:test')
-const qrate = require('./index.js')
-const assert = require('assert')
+import test from 'node:test'
+import qrate from './index.js'
+import assert from 'node:assert/strict'
 
 // several tests of these tests are flakey with timing issues
 //  this.retries(3)

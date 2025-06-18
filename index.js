@@ -1,5 +1,5 @@
-const queue = require('./lib/queue.js')
-const wrapAsync = require('./lib/wrapAsync.js')
+import queue from './lib/queue.js'
+import wrapAsync from './lib/wrapAsync.js'
 
 /**
  * A queue of tasks for the worker function to complete.
@@ -123,7 +123,7 @@ const wrapAsync = require('./lib/wrapAsync.js')
  *     console.log('finished processing bar');
  * });
  */
-module.exports = function (worker, concurrency, rateLimit) {
+export default function (worker, concurrency, rateLimit) {
   if (typeof rateLimit !== 'number') rateLimit = null
   var _worker = wrapAsync(worker)
   return queue((items, cb) => {

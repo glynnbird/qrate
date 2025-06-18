@@ -34,10 +34,10 @@ A queue is created by calling `qrate` passing in the the worker function you wan
 ```js
 
 // require qrate library
-const qrate = require('qrate');
+import qrate from 'qrate'
 
 // mark the start time of this script
-const start = new Date().getTime();
+const start = new Date().getTime()
 
 // worker function that calls back after 100ms
 const worker = function(data, done) {
